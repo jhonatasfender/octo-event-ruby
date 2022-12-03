@@ -1,58 +1,53 @@
-# Octo Events
+# Octo Event
 
-Octo Events is an application that listens to Github Events via webhooks and expose by an api for later use.
+Challenge description can be found here
 
-![alt text](imgs/octo_events.png)
+[Challenge](docs/challenge.md)
 
- The test consists in building 2 endpoints:
+![presentation](docs/show.gif)
 
-## 1. Webhook Endpoint
+## How to run the project
 
-The Webhook endpoint receives events from Github and saves them on the database, in order to do that you must read the following docs:
+As can be seen in the gif, I used docker to implement all the development of the project.
 
-* Webhooks Overview: https://developer.github.com/webhooks/ 
-* Creating Webhooks : https://developer.github.com/webhooks/creating/
+The command needed to run will be this:
 
-It must be called `/events`
-
-## 2. Events Endpoint
-
-The Events endpoint will expose the persist the events by an api that will filter by issue number
-
-**Request:**
-
-> GET /issues/1000/events
-
-**Response:**
-
-> 200 OK
-```javascript
-[ 
-  { "action": "open", created_at: "...",}, 
-  { "action": "closed", created_at: "...",} 
-]
+```bash
+docker-compose up --build
 ```
 
-**Github Integration Instructions**
+already `ngrok` I put on port `3000`:
 
-* Tip: You can use ngrok (https://ngrok.com/)  to install / debug the webhook calls, it generates a public url that will route to your local host:
+```bash
+sudo ngrok http 3000
+```
 
-   $ sudo ngrok http 4000 
+At the end of the curl command I added `jq` to make the command output more readable
 
-![alt text](imgs/ngrok.png)
+```bash
+curl -s 'http://localhost:3000/issues/{add issues number here}/events' | jq
+```
 
-   GitHub
+## Unit Test
 
-![alt text](imgs/add_webhook.png)
- 
-**Final Observations**
+To run the tests, I accessed the container.
 
-* Use any library / framework / gem  you want, you don't have to do anything "from scratch"
-* Write tests, use your favorite framework for that
-* Use Postgres 9.6+ or MySQL 5.7+ for your database;
-* Add to README.md your instructions for running the project. Whether you're delivering just source code or an accompanying `Dockerfile`/`docker-compose.yml`, we expect at most the following commands to be needed to run your solution (besides the usual docker related deploy steps):
-    - `rake db:create`
-    - `rake db:migrate`
-    - `rails s -p 3000 -b '0.0.0.0'`
-* The oldest supported Ruby version is 2.5.1;
-* Have fun and we hope you succeed :-)
+I find the ID of the container:
+```bash
+docker ps
+```
+![Untitled](docs/docker-ps.png)
+
+Then run this command with the ID you got:
+
+```bash 
+docker exec -it ${add-ID-here} bash
+```
+
+inside the container run the command `bundle exec rspec`
+
+![Untitled](docs/bundle-exec-rspec.png)
+
+This print counts the coverage that was achieved.
+
+![Untitled](docs/Untitled.png)

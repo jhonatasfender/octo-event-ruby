@@ -8,8 +8,14 @@ class EventsController < ApplicationController
 
       render json: events
     else
-      render json: params[:issue]
+      render json: { 'error': 'It was not possible to find the reported issues' }, status: :bad_request
     end
+  end
+
+  def all
+    events = Event.all().as_json(:except => :id)
+
+    render json: events
   end
 
   def create
